@@ -38,15 +38,13 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
   const readerRenderInlineStyle = useUISettingKey("readerRenderInlineStyle")
   const { entry, noMedia } = props
 
-  const [mode, setMode] = React.useState<"normal" | "debug">("normal")
-
   useEffect(() => {
     setNoMedia(!!noMedia)
-  }, [noMedia, mode])
+  }, [noMedia])
 
   useEffect(() => {
     setReaderRenderInlineStyle(readerRenderInlineStyle)
-  }, [readerRenderInlineStyle, mode])
+  }, [readerRenderInlineStyle])
 
   useEffect(() => {
     setWebViewEntry(entry)
@@ -61,7 +59,6 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
   return (
     <>
       <View
-        key={mode}
         style={{ height: contentHeight, transform: [{ translateY: 0 }] }}
         onLayout={() => {
           setWebViewEntry(entry)
