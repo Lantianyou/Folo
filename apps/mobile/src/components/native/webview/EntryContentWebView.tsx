@@ -1,17 +1,14 @@
-import { clsx } from "@follow/utils"
 import { Portal } from "@gorhom/portal"
 import { useAtom } from "jotai"
 import * as React from "react"
 import { useEffect } from "react"
-import { TouchableOpacity, View } from "react-native"
+import { View } from "react-native"
 
 import { useUISettingKey } from "@/src/atoms/settings/ui"
-import { BugCuteReIcon } from "@/src/icons/bug_cute_re"
 import type { EntryModel, EntryWithTranslation } from "@/src/store/entry/types"
 
 import { PlatformActivityIndicator } from "../../ui/loading/PlatformActivityIndicator"
 import { sharedWebViewHeightAtom } from "./atom"
-import { htmlUrl } from "./constants"
 import { prepareEntryRenderWebView, SharedWebViewModule } from "./index"
 import { NativeWebView } from "./native-webview"
 
@@ -20,12 +17,6 @@ type EntryContentWebViewProps = {
   noMedia?: boolean
   showReadability?: boolean
   showTranslation?: boolean
-}
-
-const setCodeTheme = (light: string, dark: string) => {
-  SharedWebViewModule.evaluateJavaScript(
-    `setCodeTheme(${JSON.stringify(light)}, ${JSON.stringify(dark)})`,
-  )
 }
 
 const setWebViewEntry = (entry: EntryModel) => {
@@ -46,8 +37,6 @@ const setReaderRenderInlineStyle = (value: boolean) => {
 export function EntryContentWebView(props: EntryContentWebViewProps) {
   const [contentHeight, setContentHeight] = useAtom(sharedWebViewHeightAtom)
 
-  const codeThemeLight = useUISettingKey("codeHighlightThemeLight")
-  const codeThemeDark = useUISettingKey("codeHighlightThemeDark")
   const readerRenderInlineStyle = useUISettingKey("readerRenderInlineStyle")
   const { entry, noMedia, showReadability, showTranslation } = props
 
@@ -60,10 +49,6 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
   useEffect(() => {
     setReaderRenderInlineStyle(readerRenderInlineStyle)
   }, [readerRenderInlineStyle, mode])
-
-  useEffect(() => {
-    setCodeTheme(codeThemeLight, codeThemeDark)
-  }, [codeThemeLight, codeThemeDark, mode])
 
   const entryInWebview = React.useMemo(() => {
     if (showReadability) {
@@ -116,29 +101,6 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
           </View>
         )}
       </Portal>
-      {__DEV__ && (
-        <Portal>
-          <View className="bottom-safe-offset-2 absolute left-4 flex-row gap-4">
-            <TouchableOpacity
-              className={clsx(
-                "flex size-12 items-center justify-center rounded-full",
-                mode === "debug" ? "bg-yellow" : "bg-red",
-              )}
-              onPress={() => {
-                const nextMode = mode === "debug" ? "normal" : "debug"
-                setMode(nextMode)
-                if (nextMode === "debug") {
-                  SharedWebViewModule.load("http://localhost:5173/")
-                } else {
-                  SharedWebViewModule.load(htmlUrl)
-                }
-              }}
-            >
-              <BugCuteReIcon color="#fff" />
-            </TouchableOpacity>
-          </View>
-        </Portal>
-      )}
     </>
   )
 }
