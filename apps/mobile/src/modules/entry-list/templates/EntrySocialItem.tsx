@@ -158,7 +158,7 @@ export const EntrySocialItem = memo(({ entryId }: { entryId: string }) => {
           </View>
         )}
       </ItemPressable>
-    </EntryItemContextMenu>
+    </ EntryItemContextMenu>
   )
 })
 

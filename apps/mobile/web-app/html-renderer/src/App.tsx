@@ -1,13 +1,7 @@
 import { createStore, Provider, useAtomValue } from "jotai"
 
 import type { EntryModel } from "../types"
-import {
-  codeThemeDarkAtom,
-  codeThemeLightAtom,
-  entryAtom,
-  noMediaAtom,
-  readerRenderInlineStyleAtom,
-} from "./atoms"
+import { entryAtom, noMediaAtom, readerRenderInlineStyleAtom } from "./atoms"
 import { HTML } from "./HTML"
 
 const store = createStore()
@@ -16,13 +10,6 @@ Object.assign(window, {
   setEntry(entry: EntryModel) {
     store.set(entryAtom, entry)
     bridge.measure()
-  },
-  setCodeTheme(light: string, dark: string) {
-    store.set(codeThemeLightAtom, light)
-    store.set(codeThemeDarkAtom, dark)
-  },
-  setReaderRenderInlineStyle(value: boolean) {
-    store.set(readerRenderInlineStyleAtom, value)
   },
   setNoMedia(value: boolean) {
     store.set(noMediaAtom, value)
