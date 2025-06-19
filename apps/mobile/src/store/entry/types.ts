@@ -3,7 +3,7 @@ import type { EntrySchema } from "@/src/database/schemas/types"
 import type { EntryTranslation } from "../translation/types"
 
 export type EntryModel = EntrySchema
-export type EntryWithTranslation = EntryModel & { translation?: EntryTranslation }
+export type EntryWithTranslation = EntryModel
 export type FetchEntriesProps = {
   feedId?: string
   feedIdList?: string[]

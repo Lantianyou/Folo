@@ -5,7 +5,7 @@ import { useEffect } from "react"
 import { View } from "react-native"
 
 import { useUISettingKey } from "@/src/atoms/settings/ui"
-import type { EntryModel, EntryWithTranslation } from "@/src/store/entry/types"
+import type { EntryModel } from "@/src/store/entry/types"
 
 import { PlatformActivityIndicator } from "../../ui/loading/PlatformActivityIndicator"
 import { sharedWebViewHeightAtom } from "./atom"
@@ -13,10 +13,8 @@ import { prepareEntryRenderWebView, SharedWebViewModule } from "./index"
 import { NativeWebView } from "./native-webview"
 
 type EntryContentWebViewProps = {
-  entry: EntryWithTranslation
+  entry: EntryModel
   noMedia?: boolean
-  showReadability?: boolean
-  showTranslation?: boolean
 }
 
 const setWebViewEntry = (entry: EntryModel) => {
@@ -38,7 +36,7 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
   const [contentHeight, setContentHeight] = useAtom(sharedWebViewHeightAtom)
 
   const readerRenderInlineStyle = useUISettingKey("readerRenderInlineStyle")
-  const { entry, noMedia, showReadability, showTranslation } = props
+  const { entry, noMedia } = props
 
   const [mode, setMode] = React.useState<"normal" | "debug">("normal")
 
@@ -50,27 +48,9 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
     setReaderRenderInlineStyle(readerRenderInlineStyle)
   }, [readerRenderInlineStyle, mode])
 
-  const entryInWebview = React.useMemo(() => {
-    if (showReadability) {
-      return {
-        ...entry,
-        content: entry.readabilityContent,
-      }
-    }
-
-    if (showTranslation) {
-      return {
-        ...entry,
-        content: entry.translation?.content || entry.content,
-      }
-    }
-
-    return entry
-  }, [entry, showReadability, showTranslation])
-
   useEffect(() => {
-    setWebViewEntry(entryInWebview)
-  }, [entryInWebview])
+    setWebViewEntry(entry)
+  }, [entry])
 
   const onceRef = React.useRef(false)
   if (!onceRef.current) {
@@ -84,7 +64,7 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
         key={mode}
         style={{ height: contentHeight, transform: [{ translateY: 0 }] }}
         onLayout={() => {
-          setWebViewEntry(entryInWebview)
+          setWebViewEntry(entry)
         }}
       >
         <NativeWebView
@@ -95,7 +75,7 @@ export function EntryContentWebView(props: EntryContentWebViewProps) {
       </View>
 
       <Portal>
-        {(showReadability ? !entry.readabilityContent : !entry.content) && (
+        {!entry.content && (
           <View className="absolute inset-0 items-center justify-center">
             <PlatformActivityIndicator />
           </View>

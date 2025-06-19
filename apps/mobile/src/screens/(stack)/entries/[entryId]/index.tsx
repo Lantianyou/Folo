@@ -1,13 +1,12 @@
 import { FeedViewType } from "@follow/constants"
 import { PortalProvider } from "@gorhom/portal"
-import { atom, useAtomValue } from "jotai"
+import { atom } from "jotai"
 import { useEffect, useMemo } from "react"
 import { Pressable, Text, View } from "react-native"
 import Animated, { FadeIn, FadeOut } from "react-native-reanimated"
 import { useSafeAreaInsets } from "react-native-safe-area-context"
 import { useColor } from "react-native-uikit-colors"
 
-import { useGeneralSettingKey } from "@/src/atoms/settings/general"
 import { BottomTabBarHeightContext } from "@/src/components/layouts/tabbar/contexts/BottomTabBarHeightContext"
 import { SafeNavigationScrollView } from "@/src/components/layouts/views/SafeNavigationScrollView"
 import { EntryContentWebView } from "@/src/components/native/webview/EntryContentWebView"
@@ -16,13 +15,12 @@ import { FeedIcon } from "@/src/components/ui/icon/feed-icon"
 import { CalendarTimeAddCuteReIcon } from "@/src/icons/calendar_time_add_cute_re"
 import { openLink } from "@/src/lib/native"
 import type { NavigationControllerView } from "@/src/lib/navigation/types"
-import { EntryContentContext, useEntryContentContext } from "@/src/modules/entry-content/ctx"
+import { EntryContentContext } from "@/src/modules/entry-content/ctx"
 import { EntryAISummary } from "@/src/modules/entry-content/EntryAISummary"
 import { useEntry, usePrefetchEntryDetail } from "@/src/store/entry/hooks"
 import { entrySyncServices } from "@/src/store/entry/store"
-import type { EntryWithTranslation } from "@/src/store/entry/types"
 import { useFeed } from "@/src/store/feed/hooks"
-import { useEntryTranslation, usePrefetchEntryTranslation } from "@/src/store/translation/hooks"
+import { usePrefetchEntryTranslation } from "@/src/store/translation/hooks"
 import { useAutoMarkAsRead } from "@/src/store/unread/hooks"
 
 import { EntrySocialTitle, EntryTitle } from "../../../../modules/entry-content/EntryTitle"
@@ -35,14 +33,6 @@ export const EntryDetailScreen: NavigationControllerView<{
   usePrefetchEntryTranslation([entryId], true)
   useAutoMarkAsRead(entryId)
   const entry = useEntry(entryId)
-  const translation = useEntryTranslation(entryId)
-  const entryWithTranslation = useMemo(() => {
-    if (!entry) return entry
-    return {
-      ...entry,
-      translation,
-    } as EntryWithTranslation
-  }, [entry, translation])
 
   const insets = useSafeAreaInsets()
   const ctxValue = useMemo(
@@ -90,11 +80,9 @@ export const EntryDetailScreen: NavigationControllerView<{
               )}
             </Pressable>
             <EntryAISummary entryId={entryId as string} />
-            {entryWithTranslation && (
-              <View className="mt-3">
-                <EntryContentWebViewWithContext entry={entryWithTranslation} />
-              </View>
-            )}
+
+            <View className="mt-3">{entry && <EntryContentWebView entry={entry} />}</View>
+
             {viewType === FeedViewType.SocialMedia && (
               <View className="mt-2">
                 <EntryInfoSocial entryId={entryId as string} />
@@ -104,20 +92,6 @@ export const EntryDetailScreen: NavigationControllerView<{
         </BottomTabBarHeightContext.Provider>
       </PortalProvider>
     </EntryContentContext.Provider>
-  )
-}
-
-const EntryContentWebViewWithContext = ({ entry }: { entry: EntryWithTranslation }) => {
-  const { showReadabilityAtom, showAITranslationAtom } = useEntryContentContext()
-  const showReadability = useAtomValue(showReadabilityAtom)
-  const translationSetting = useGeneralSettingKey("translation")
-  const showTranslation = useAtomValue(showAITranslationAtom)
-  return (
-    <EntryContentWebView
-      entry={entry}
-      showReadability={showReadability}
-      showTranslation={translationSetting || showTranslation}
-    />
   )
 }
 
