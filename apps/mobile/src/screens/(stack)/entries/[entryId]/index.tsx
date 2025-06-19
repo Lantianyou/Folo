@@ -1,4 +1,3 @@
-import { FeedViewType } from "@follow/constants"
 import { PortalProvider } from "@gorhom/portal"
 
 import { Pressable, View } from "react-native"
@@ -12,12 +11,9 @@ import { openLink } from "@/src/lib/native"
 import type { NavigationControllerView } from "@/src/lib/navigation/types"
 import { useEntry, usePrefetchEntryDetail } from "@/src/store/entry/hooks"
 
-import { EntrySocialTitle } from "../../../../modules/entry-content/EntryTitle"
-
 export const EntryDetailScreen: NavigationControllerView<{
   entryId: string
-  view: FeedViewType
-}> = ({ entryId, view: viewType }) => {
+}> = ({ entryId }) => {
   usePrefetchEntryDetail(entryId)
 
   const entry = useEntry(entryId)
@@ -31,20 +27,6 @@ export const EntryDetailScreen: NavigationControllerView<{
           automaticallyAdjustContentInsets={false}
           className="bg-system-background"
         >
-          <Pressable onPress={() => entry?.url && openLink(entry.url)} className="relative py-4">
-            {({ pressed }) => (
-              <>
-                {pressed && (
-                  <Animated.View
-                    entering={FadeIn}
-                    exiting={FadeOut}
-                    className={"bg-system-fill absolute inset-x-1 inset-y-0 rounded-xl"}
-                  />
-                )}
-                <EntrySocialTitle entryId={entryId as string} />
-              </>
-            )}
-          </Pressable>
           <View className="mt-3">{entry && <EntryContentWebView entry={entry} />}</View>
         </SafeNavigationScrollView>
       </BottomTabBarHeightContext.Provider>

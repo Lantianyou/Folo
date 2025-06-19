@@ -73,28 +73,7 @@ export const usersTable = sqliteTable("users", {
 export const entriesTable = sqliteTable("entries", {
   id: text("id").primaryKey(),
   title: text("title"),
-  url: text("url"),
   content: text("content"),
-  readabilityContent: text("source_content"),
-  description: text("description"),
-  guid: text("guid").notNull(),
-  author: text("author"),
-  authorUrl: text("author_url"),
-  authorAvatar: text("author_avatar"),
-  insertedAt: integer("inserted_at", { mode: "timestamp" }).notNull(),
-  publishedAt: integer("published_at", { mode: "timestamp" }).notNull(),
-  media: text("media", { mode: "json" }).$type<MediaModel[]>(),
-  categories: text("categories", { mode: "json" }).$type<string[]>(),
-  attachments: text("attachments", { mode: "json" }).$type<AttachmentsModel[]>(),
-  extra: text("extra", { mode: "json" }).$type<ExtraModel>(),
-  language: text("language"),
-
-  feedId: text("feed_id"),
-
-  inboxHandle: text("inbox_handle"),
-  read: integer("read", { mode: "boolean" }),
-  sources: text("sources", { mode: "json" }).$type<string[]>(),
-  settings: text("settings", { mode: "json" }).$type<ActionSettings>(),
 })
 
 export const collectionsTable = sqliteTable("collections", {

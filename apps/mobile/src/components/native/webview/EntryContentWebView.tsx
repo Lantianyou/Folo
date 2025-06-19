@@ -3,8 +3,6 @@ import { useAtom } from "jotai"
 import * as React from "react"
 import { useEffect } from "react"
 import { View } from "react-native"
-
-import { useUISettingKey } from "@/src/atoms/settings/ui"
 import type { EntryModel } from "@/src/store/entry/types"
 
 import { PlatformActivityIndicator } from "../../ui/loading/PlatformActivityIndicator"
@@ -14,7 +12,6 @@ import { NativeWebView } from "./native-webview"
 
 type EntryContentWebViewProps = {
   entry: EntryModel
-  noMedia?: boolean
 }
 
 const setWebViewEntry = (entry: EntryModel) => {
@@ -24,27 +21,10 @@ const setWebViewEntry = (entry: EntryModel) => {
 }
 export { setWebViewEntry as preloadWebViewEntry }
 
-const setNoMedia = (value: boolean) => {
-  SharedWebViewModule.evaluateJavaScript(`setNoMedia(${value})`)
-}
-
-const setReaderRenderInlineStyle = (value: boolean) => {
-  SharedWebViewModule.evaluateJavaScript(`setReaderRenderInlineStyle(${value})`)
-}
-
 export function EntryContentWebView(props: EntryContentWebViewProps) {
   const [contentHeight, setContentHeight] = useAtom(sharedWebViewHeightAtom)
 
-  const readerRenderInlineStyle = useUISettingKey("readerRenderInlineStyle")
-  const { entry, noMedia } = props
-
-  useEffect(() => {
-    setNoMedia(!!noMedia)
-  }, [noMedia])
-
-  useEffect(() => {
-    setReaderRenderInlineStyle(readerRenderInlineStyle)
-  }, [readerRenderInlineStyle])
+  const { entry } = props
 
   useEffect(() => {
     setWebViewEntry(entry)

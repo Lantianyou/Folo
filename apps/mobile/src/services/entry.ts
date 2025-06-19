@@ -29,24 +29,6 @@ class EntryServiceStatic implements Hydratable, Resetable {
     await db.update(entriesTable).set(entry).where(eq(entriesTable.id, entry.id))
   }
 
-  async patchMany({
-    entry,
-    entryIds,
-    feedIds,
-  }: {
-    entry: Partial<EntrySchema>
-    entryIds?: string[]
-    feedIds?: string[]
-  }) {
-    if (!entryIds && !feedIds) return
-    await db
-      .update(entriesTable)
-      .set(entry)
-      .where(
-        or(inArray(entriesTable.id, entryIds ?? []), inArray(entriesTable.feedId, feedIds ?? [])),
-      )
-  }
-
   getEntryMany(entryId: string[]) {
     return db.query.entriesTable.findMany({ where: inArray(entriesTable.id, entryId) })
   }
